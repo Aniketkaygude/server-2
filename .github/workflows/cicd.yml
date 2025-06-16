@@ -32,7 +32,7 @@ jobs:
             echo '📂 Files in /home/ubuntu:' &&
             ls -la /home/ubuntu &&
 
-            export PATH=/home/ubuntu/.nvm/versions/node/v22.15.1/bin:\$PATH &&
+            # export PATH=/home/ubuntu/.nvm/versions/node/v22.15.1/bin:\$PATH &&
 
             cd server-2 &&
             echo '✅ Changed into /home/ubuntu/server-2' &&
