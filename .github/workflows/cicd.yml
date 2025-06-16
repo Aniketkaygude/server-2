@@ -34,8 +34,8 @@ jobs:
 
             export PATH=/home/ubuntu/.nvm/versions/node/v22.15.1/bin:\$PATH &&
 
-            cd server2 &&
-            echo '✅ Changed into /home/ubuntu/server2' &&
+            cd server-2 &&
+            echo '✅ Changed into /home/ubuntu/server-2' &&
             ls -la &&
 
             git pull origin main &&
