@@ -15,19 +15,33 @@ jobs:
           PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           KNOWN_HOSTS: ${{ secrets.KNOWN_HOSTS }}
         run: |
-          # Write the private key to a file
+          # Store the SSH private key securely
           echo "$PRIVATE_KEY" > ~/ssh_key
           chmod 600 ~/ssh_key
 
-          # Set up known_hosts to avoid SSH prompt
+          # Setup known_hosts to avoid SSH authenticity prompt
           mkdir -p /home/runner/.ssh
           echo "$KNOWN_HOSTS" > /home/runner/.ssh/known_hosts
 
-          # SSH into the EC2 instance and run deployment commands
+          # Connect and run commands on EC2
           ssh -o StrictHostKeyChecking=no -i ~/ssh_key ubuntu@13.204.47.94 << 'EOF'
+            # Ensure NVM's node path is in use
             export PATH=/home/ubuntu/.nvm/versions/node/v22.15.1/bin:$PATH
-            cd /home/ubuntu/server2  # Adjust if your folder name is different
+
+            # Go to the correct project directory
+            cd /home/ubuntu/server2
+
+            # Pull latest changes from GitHub
             git pull origin main
+
+            # Install dependencies
             npm install
-            pm2 restart index.js          # Adjust if your start command or filename is different
+
+            # Start or restart app with PM2
+            if pm2 list | grep -q 'server2'; then
+              pm2 restart server2
+            else
+              pm2 start index.js --name server2
+              pm2 save
+            fi
           EOF
