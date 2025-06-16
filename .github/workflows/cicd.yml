@@ -23,10 +23,21 @@ jobs:
           mkdir -p ~/.ssh
           echo "$KNOWN_HOSTS" > ~/.ssh/known_hosts
 
-          # SSH into EC2 and execute all commands **remotely**
+          # SSH into EC2 and run commands
           ssh -tt -i ~/ssh_key ubuntu@13.204.47.94 "
+            echo '🔍 Initial Working Directory:' &&
+            pwd &&
+            echo '📂 Files in home directory:' &&
+            ls -la ~ &&
+            echo '📂 Files in /home/ubuntu:' &&
+            ls -la /home/ubuntu &&
+
             export PATH=/home/ubuntu/.nvm/versions/node/v22.15.1/bin:\$PATH &&
-            cd sever2 &&
+
+            cd /home/ubuntu/server2 &&
+            echo '✅ Changed into /home/ubuntu/server2' &&
+            ls -la &&
+
             git pull origin main &&
             npm install &&
             pm2 restart server2 || pm2 start index.js --name server2 &&
