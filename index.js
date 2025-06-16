@@ -8,6 +8,8 @@ app.use(cors());
 app.use(express.json());
 
 const arr = [
+
+    
   { name: "Aniket", age: 22, gender: "Male" },
   { name: "Riya", age: 25, gender: "Female" },
   { name: "Aman", age: 28, gender: "Male" },
