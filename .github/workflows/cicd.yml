@@ -7,41 +7,28 @@ on:
 jobs:
   redeploy_to_EC2:
     runs-on: ubuntu-latest
-    name: Deploying everything to the EC2 machine
+    name: Deploying to the EC2 machine
 
     steps:
-      - name: Deploy via SSH manually
+      - name: SSH and deploy
         env:
           PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           KNOWN_HOSTS: ${{ secrets.KNOWN_HOSTS }}
         run: |
-          # Store the SSH private key securely
+          # Save the SSH key
           echo "$PRIVATE_KEY" > ~/ssh_key
           chmod 600 ~/ssh_key
 
-          # Setup known_hosts to avoid SSH authenticity prompt
-          mkdir -p /home/runner/.ssh
-          echo "$KNOWN_HOSTS" > /home/runner/.ssh/known_hosts
+          # Configure known_hosts
+          mkdir -p ~/.ssh
+          echo "$KNOWN_HOSTS" > ~/.ssh/known_hosts
 
-          # Connect and run commands on EC2
-          ssh -o StrictHostKeyChecking=no -i ~/ssh_key ubuntu@13.204.47.94 << 'EOF'
-            # Ensure NVM's node path is in use
-            export PATH=/home/ubuntu/.nvm/versions/node/v22.15.1/bin:$PATH
-
-            # Go to the correct project directory
-            cd /home/ubuntu/server2
-
-            # Pull latest changes from GitHub
-            git pull origin main
-
-            # Install dependencies
-            npm install
-
-            # Start or restart app with PM2
-            if pm2 list | grep -q 'server2'; then
-              pm2 restart server2
-            else
-              pm2 start index.js --name server2
-              pm2 save
-            fi
-          EOF
+          # SSH into EC2 and execute all commands **remotely**
+          ssh -tt -i ~/ssh_key ubuntu@13.204.47.94 "
+            export PATH=/home/ubuntu/.nvm/versions/node/v22.15.1/bin:\$PATH &&
+            cd /home/ubuntu/server2 &&
+            git pull origin main &&
+            npm install &&
+            pm2 restart server2 || pm2 start index.js --name server2 &&
+            pm2 save
+          "
