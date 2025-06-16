@@ -26,8 +26,7 @@ jobs:
           # SSH into EC2 and execute all commands **remotely**
           ssh -tt -i ~/ssh_key ubuntu@13.204.47.94 "
             export PATH=/home/ubuntu/.nvm/versions/node/v22.15.1/bin:\$PATH &&
-             
-            cd server2 &&
+            cd sever2 &&
             git pull origin main &&
             npm install &&
             pm2 restart server2 || pm2 start index.js --name server2 &&
